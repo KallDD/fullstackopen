@@ -1,6 +1,7 @@
 import { useState, useEffect, use } from 'react'
 import axios from 'axios'
 import Person from './components/person'
+import personService from './services/persons'
 
 
 
@@ -10,31 +11,51 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newFilter, setNewFilter] = useState('')
 
-  const fetchDataHook = () => {
-    axios
-        .get('http://localhost:3001/persons')
-        .then(response => {
-          setPersons(response.data)
-        })
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(data => {setPersons(data)})
+  }, [])
+
+  const deletePerson = (id, name) => {
+    if (!window.confirm(`Are you sure you want to delete ${name}?`)) return
+    personService
+      .delete(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
   }
-  useEffect(fetchDataHook, [])
 
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName, 
-      number: newNumber
+      number: newNumber,
     }
     
     const nameExists = persons.some(person => person.name === newName) ? true : false
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`)
+      if(!window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) return
+      personService
+        .update(persons.find(person => person.name === newName).id, personObject)
+        .then(data => {
+          setPersons(persons.map(person => person.name !== newName ? person : data))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          alert(`Information of ${newName} has already been removed from server`)
+          setPersons(persons.filter(person => person.name !== newName))
+        })
       return
     }
-
-    setPersons(persons.concat( personObject ))
-    setNewName('')
-    setNewNumber('')
+    personService
+      .create(personObject)
+      .then(data => {
+        setPersons(persons.concat(data))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleNameChange = (event) => {
@@ -87,7 +108,11 @@ const App = () => {
       <h2>Numbers</h2>
         <ul>
           {personsToShow.map(person =>
-            <Person key={person.name} person={person} />
+            <Person 
+              key={person.name}
+              person={person}
+              deletePerson={() => deletePerson(person.id, person.name)}
+            />
           )}
         </ul>
     </div>
