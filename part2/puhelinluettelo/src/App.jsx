@@ -1,5 +1,5 @@
 import { useState, useEffect, use } from 'react'
-import axios from 'axios'
+import Notification from './components/notification'
 import Person from './components/person'
 import personService from './services/persons'
 
@@ -10,6 +10,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newName, setNewName] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   useEffect(() => {
     personService
@@ -24,6 +26,11 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter(person => person.id !== id))
       })
+    setMessageType('success')
+    setMessage(`Deleted ${name}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const addPerson = (event) => {
@@ -44,9 +51,18 @@ const App = () => {
           setNewNumber('')
         })
         .catch(error => {
-          alert(`Information of ${newName} has already been removed from server`)
+          setMessageType('error')
+          setMessage(`Information of ${newName} has already been removed from server`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
           setPersons(persons.filter(person => person.name !== newName))
         })
+      setMessageType('success')
+      setMessage(`Updated ${newName} number to ${newNumber}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
       return
     }
     personService
@@ -56,6 +72,11 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      setMessageType('success')
+      setMessage(`Added ${newName} with number ${newNumber}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
   }
 
   const handleNameChange = (event) => {
@@ -79,6 +100,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={messageType} />
       <form>
         <div>
           filter shown with: <input 
