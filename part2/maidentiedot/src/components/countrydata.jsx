@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-const api_key = import.meta.env.WEATHER_API_KEY
+const api_key = import.meta.env.VITE_WEATHER_API_KEY
 
 const Countrydata = ({ country }) => {
   if (!country) return null;
