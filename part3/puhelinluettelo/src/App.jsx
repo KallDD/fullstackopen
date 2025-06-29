@@ -72,11 +72,20 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
-      setMessageType('success')
-      setMessage(`Added ${newName} with number ${newNumber}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
+      .catch(error => {
+        setMessageType('error')
+        setMessage(`Error: ${error.response.data.error}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 8000)
+        return
+      })
+
+    setMessageType('success')
+    setMessage(`Added ${newName} with number ${newNumber}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
   }
 
   const handleNameChange = (event) => {
