@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { listenerCount } = require('../../../part3/puhelinluetteloBackend/models/person');
 const Blog = require('../models/blog');
 
 router.get('/', (request, response) => {
@@ -51,6 +50,6 @@ router.put('/:id', async (request, response) => {
   } catch (error) {
     response.status(400).end()
   }
-})
+}) 
 
 module.exports = router;
