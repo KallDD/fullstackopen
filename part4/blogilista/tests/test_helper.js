@@ -51,7 +51,23 @@ const initialBlogs = [
   }  
 ]
 
+const createNewUser = async (username, name, password, api) => {
+  const newUser = {
+        username: username,
+        name: name,
+        password: password,
+      }
+  const response = await api.post('/api/users').send(newUser)
+  return response
+}
+
+const userLoginToken = async (username, password, api) => {
+  const response = await api.post('/api/login').send({ username, password })
+  return response.body.token
+}
 
 module.exports = {
   initialBlogs,
+  createNewUser,
+  userLoginToken
 }
