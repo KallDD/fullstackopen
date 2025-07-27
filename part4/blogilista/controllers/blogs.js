@@ -6,7 +6,7 @@ const { userExtractor } = require('../utils/middleware')
 
 router.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', {
-    username: 1,
+    username: 1, name: 1,
   })
   response.json(blogs)
 })
@@ -23,6 +23,8 @@ router.post('/', userExtractor, async (request, response) => {
     user: user._id
   })
 
+  console.log(`User ${user.username} is creating a blog:`, blog)
+
   if (!blog.title || !blog.url) {
     return response.status(400).json({ error: 'Title and URL are required' })
   }
@@ -38,7 +40,7 @@ router.post('/', userExtractor, async (request, response) => {
 router.delete('/:id', userExtractor, async (request, response) => {
   const id = request.params.id
   const user = request.user
-
+  
   const toDelete = await Blog.findById(id)
 
   if (!toDelete) {
