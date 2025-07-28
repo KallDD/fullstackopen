@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, updateBlog, currentUser }) => {
+const Blog = ({ blog, handleLike, handleRemove, currentUser }) => {
   const blogStyle = {
     padding: 5,
     border: 'solid',
@@ -17,28 +17,16 @@ const Blog = ({ blog, updateBlog, currentUser }) => {
     setShowBlogData(!showBlogData)
   }
 
-  const handleLike = async () => {
-    const updatedBlog = await blogService.like(blog)
-    updateBlog(updatedBlog)
-  }
-
-  const handleRemove = async () => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      await blogService.delete(blog)
-      updateBlog(null)
-    }
-  }
-
   return (
     <div style = {blogStyle}>
       {blog.title} {blog.author}
       <button style={hideWhenVisible} onClick={() => toggleVisibility()}>view</button>
       <button style={showWhenVisible} onClick={() => toggleVisibility()}>hide</button>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} data-testid="blog-details">
         <p>{blog.url}</p>
-        <p>{blog.likes} likes <button onClick={() => handleLike()}>like</button></p>
+        <p>{blog.likes} likes <button onClick={() => handleLike(blog)}>like</button></p>
         <p>{blog.user.name}</p>
-        <button style={userCanRemove} onClick={() => handleRemove()}>Remove</button>
+        <button style={userCanRemove} onClick={() => handleRemove(blog)}>Remove</button>
       </div>
     </div>
   )

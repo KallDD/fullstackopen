@@ -66,10 +66,22 @@ const App = () => {
     }
   }
 
-  const updateBlog = (updatedBlog) => {
+  const rePopulateBlogFields = () => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
+  }
+
+  const likeBlog = async (blog) => {
+    await blogService.like(blog)
+    rePopulateBlogFields()
+  }
+
+  const removeBlog = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      await blogService.delete(blog)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    }
   }
 
   useEffect(() => {
@@ -128,7 +140,7 @@ const App = () => {
         </Togglable>
 
         {sortedBlogs.map(blog =>
-          <Blog key={blog.id} blog={blog} updateBlog={updateBlog} currentUser={user} />
+          <Blog key={blog.id} blog={blog} handleLike={likeBlog} handleRemove={removeBlog} currentUser={user} />
         )}
       </div>
       }
