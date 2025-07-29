@@ -49,7 +49,7 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
 
       const savedBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(savedBlog))
+      rePopulateBlogFields()
 
       setMessageType('success')
       setMessage(`A new blog ${savedBlog.title} by ${savedBlog.author} added`)
@@ -103,7 +103,7 @@ const App = () => {
     <div>
       <h2>Login</h2>
       <Notification message={message} type={messageType} />
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} name="loginForm">
         <div>
           username
           <input
